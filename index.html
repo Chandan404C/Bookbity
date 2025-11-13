@@ -121,6 +121,7 @@
             flex-direction: column;
             cursor: pointer;
             z-index: 101;
+            padding: 5px;
         }
 
         .hamburger span {
@@ -143,52 +144,61 @@
             transform: rotate(45deg) translate(-5px, -6px);
         }
 
-        /* Mobile Menu */
-        .mobile-menu {
+        /* Sidebar Menu */
+        .sidebar {
             position: fixed;
             top: 0;
-            right: -100%;
-            width: 80%;
-            max-width: 300px;
+            right: -300px;
+            width: 280px;
             height: 100vh;
             background-color: var(--dark);
             padding: 80px 20px 20px;
             transition: right 0.3s ease;
             z-index: 99;
             overflow-y: auto;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
         }
 
-        .mobile-menu.active {
+        .sidebar.active {
             right: 0;
         }
 
-        .mobile-menu ul {
+        .sidebar ul {
             list-style: none;
             margin-bottom: 30px;
         }
 
-        .mobile-menu ul li {
-            margin-bottom: 20px;
+        .sidebar ul li {
+            margin-bottom: 15px;
         }
 
-        .mobile-menu ul li a {
+        .sidebar ul li a {
             color: var(--light);
             text-decoration: none;
             font-size: 18px;
             display: block;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--dark-gray);
+            padding: 12px 15px;
+            border-radius: 4px;
+            transition: all 0.3s;
         }
 
-        .mobile-auth-buttons {
+        .sidebar ul li a:hover {
+            background-color: var(--dark-gray);
+            color: var(--primary);
+        }
+
+        .sidebar-auth-buttons {
             display: flex;
             flex-direction: column;
             gap: 15px;
             margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--dark-gray);
         }
 
-        .mobile-auth-buttons .btn {
+        .sidebar-auth-buttons .btn {
             text-align: center;
+            padding: 12px;
         }
 
         .overlay {
@@ -576,30 +586,30 @@
             </div>
             
             <!-- Hamburger Menu -->
-            <div class="hamburger" id="hamburger">
+            <div class="hamburger" id="hamburger" onclick="toggleSidebar()">
                 <span></span>
                 <span></span>
                 <span></span>
             </div>
         </div>
         
-        <!-- Mobile Menu -->
-        <div class="mobile-menu" id="mobileMenu">
+        <!-- Sidebar Menu -->
+        <div class="sidebar" id="sidebar">
             <ul>
-                <li><a href="#" onclick="showPage('home'); toggleMobileMenu()">Home</a></li>
-                <li><a href="#" onclick="showPage('books'); toggleMobileMenu()">Books</a></li>
-                <li><a href="#" onclick="showPage('dashboard'); toggleMobileMenu()">Dashboard</a></li>
-                <li><a href="#" onclick="showPage('account'); toggleMobileMenu()">Account</a></li>
+                <li><a href="#" onclick="showPage('home'); toggleSidebar()"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#" onclick="showPage('books'); toggleSidebar()"><i class="fas fa-book"></i> Books</a></li>
+                <li><a href="#" onclick="showPage('dashboard'); toggleSidebar()"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#" onclick="showPage('account'); toggleSidebar()"><i class="fas fa-user"></i> Account</a></li>
             </ul>
             
-            <div class="mobile-auth-buttons">
-                <a href="#" class="btn btn-secondary" onclick="showPage('account'); toggleMobileMenu()">Sign In</a>
-                <a href="#" class="btn btn-primary" onclick="showPage('account'); toggleMobileMenu()">Sign Up</a>
+            <div class="sidebar-auth-buttons">
+                <a href="#" class="btn btn-secondary" onclick="showPage('account'); toggleSidebar()">Sign In</a>
+                <a href="#" class="btn btn-primary" onclick="showPage('account'); toggleSidebar()">Sign Up</a>
             </div>
         </div>
         
         <!-- Overlay -->
-        <div class="overlay" id="overlay"></div>
+        <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
     </header>
 
     <!-- Home Page -->
@@ -617,21 +627,21 @@
             <section class="content-section">
                 <h2 class="section-title">Trending Now</h2>
                 <div class="book-row">
-                    <div class="books-container">
+                    <div class="books-container" id="trending-books">
                         <!-- Trending books will be populated by JS -->
                     </div>
                 </div>
 
                 <h2 class="section-title">Popular Fiction</h2>
                 <div class="book-row">
-                    <div class="books-container">
+                    <div class="books-container" id="fiction-books">
                         <!-- Fiction books will be populated by JS -->
                     </div>
                 </div>
 
                 <h2 class="section-title">New Releases</h2>
                 <div class="book-row">
-                    <div class="books-container">
+                    <div class="books-container" id="new-releases">
                         <!-- New releases will be populated by JS -->
                     </div>
                 </div>
@@ -800,24 +810,19 @@
             { title: "The Glass Palace", author: "Amitav Ghosh", category: "Fiction" }
         ];
 
-        // Mobile menu functionality
-        function toggleMobileMenu() {
+        // Sidebar functionality
+        function toggleSidebar() {
             const hamburger = document.getElementById('hamburger');
-            const mobileMenu = document.getElementById('mobileMenu');
+            const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
             
             hamburger.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
+            sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
             
-            // Prevent body scroll when menu is open
-            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+            // Prevent body scroll when sidebar is open
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
         }
-
-        // Close mobile menu when clicking on overlay
-        document.getElementById('overlay').addEventListener('click', function() {
-            toggleMobileMenu();
-        });
 
         // Page navigation function
         function showPage(pageId) {
@@ -845,7 +850,7 @@
 
         // Populate home page with books
         function populateHomePage() {
-            const trendingContainer = document.querySelector('#home .books-container');
+            const trendingContainer = document.getElementById('trending-books');
             trendingContainer.innerHTML = '';
             
             // Add first 6 books as trending
@@ -854,7 +859,7 @@
             });
             
             // Add fiction books
-            const fictionContainer = document.querySelectorAll('#home .books-container')[1];
+            const fictionContainer = document.getElementById('fiction-books');
             fictionContainer.innerHTML = '';
             
             books.slice(2, 8).forEach(book => {
@@ -862,7 +867,7 @@
             });
             
             // Add new releases
-            const newReleasesContainer = document.querySelectorAll('#home .books-container')[2];
+            const newReleasesContainer = document.getElementById('new-releases');
             newReleasesContainer.innerHTML = '';
             
             books.slice(4, 10).forEach(book => {
